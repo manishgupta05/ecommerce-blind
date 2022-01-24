@@ -1,0 +1,20 @@
+create database Shopping
+
+CREATE TABLE IF NOT EXISTS register (
+  userid int primary key NOT NULL AUTO_INCREMENT,
+  name varchar(50) DEFAULT NULL,
+  mail varchar(50) DEFAULT NULL,
+ mobile varchar(50) DEFAULT NULL,  
+  currentdate varchar(50) DEFAULT NULL,
+  username varchar(50) DEFAULT NULL,
+  password varchar(50) DEFAULT NULL,
+address varchar(250) DEFAULT NULL)
+
+
+create table Product(pid int primary key auto_increment, pname varchar(10) not null,
+cate varchar(50) not null,pprice int not null, pweight varchar(50) not null, des varchar(250) not null,pimage varchar(255) not null )
+
+
+create table payment(Paymentdate varchar(50) not null,prodid varchar(50) not null,prodname varchar(50) not null, userid varchar(50) not null , amount varchar(50) not null,tax varchar(50) not null,total varchar(50) not null,paytype varchar(50) not null,bankname varchar(50) not null)
+
+create table feedback (fdate varchar(50) not null, userid varchar(50) not null,rating  varchar(50) not null, review varchar(50) not null)
