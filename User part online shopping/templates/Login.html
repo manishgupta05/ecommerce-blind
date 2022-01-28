@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <title>Sightless Helper</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="static/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="static/assets/css/style.css">
+    <link rel="stylesheet" href="static/assets/css/owl.css">
+</head>
+
+  <body>
+  <!-- Header -->
+    <header class="">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('.index') }}"><h2>Sightless Helper</h2></a>
+         
+            <span class="navbar-toggler-icon"></span>          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('.index') }}">Home                    </a>                </li> 
+
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('.help') }}">Help</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('.login') }}">Login</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('.signup') }}">Sign Up</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+ 
+    <div class="best-features">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="section-heading">
+           
+            </div>
+          </div>
+          <div class="col-md-6">
+           
+<form action="{{ url_for('checklogin') }}" method="POST">
+<b>					
+                <table width="442" height="294" border="1" bordercolor="#000000" bgcolor="#C6C6C6">
+                  <tr>
+                    <td colspan="2"><div align="center" class="style3">Admin/Seller/Buyer Login Here </div></td>
+                  </tr>
+                  <tr>
+                    <td><span class="style3">User Name </span></td>
+                    <td><input type="text" name="username">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><span class="style3">Password</span></td>
+                    <td><input type="password" name="password">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><span class="style3">User Role </span></td>
+                    <td><select name="utype">
+                        <option selected="selected">- Select -</option>
+                        <option value="Admin">Admin</option>
+                        <option value="User">User</option>
+                                          </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><div align="center">
+                        <input type="submit" name="Submit" value="Login">&nbsp;&nbsp;&nbsp;
+	<input type="submit" name="Submit2" value="Cancel">
+                    </div></td>
+                    
+                  </tr>
+                  <tr>
+                    <td colspan="2"><span class="style3">Are You New user Register Here <a href="{{ url_for('.signup') }}">Register Now</a></span></td>
+                  </tr>
+                </table>
+</b>
+</form>
+           </div>
+             <div class="col-md-6">
+            <div class="right-image">
+              <img src="static/fingerreader.jpg" alt="" width="844" height="280">            </div>
+          </div>
+        </div>
+
+       </div>
+           
+       
+      </div>
+    </div>
+
+  <div class="call-to-action">
+      <div class="container">
+        <div class="row">
+  <img src="static/img5.jpg" alt="" width="70%" height="280">   
+</div>
+      </div>
+    </div>
+
+    
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="inner-content">
+              <p>Copyright @ 2020 SoftLoft Technologies. www.softlofttechnologies.in</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
