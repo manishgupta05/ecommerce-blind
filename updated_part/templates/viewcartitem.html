@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+  transition: background-color .5s;
+  margin: 0;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+#main {
+    transition: margin-left .5s;
+  padding: 16px;
+  color: white;
+  background-color: #4058a5;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+/* this div and body part */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 25%;
+  padding: 0 10px;
+  margin: 15px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin-top: 10px;
+margin-left: 10%;
+margin-right: 10%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
+/* Style the counter cards */
+
+
+/* style for button */
+
+.button {
+  background-color: #4058a5;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 8px ;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+
+}
+
+.button2:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+/* style for product card */
+
+.card {
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  max-width: 300px;
+  margin: auto;
+<!--  text-align: center;-->
+  font-family: arial;
+  height: 305px;
+  /* background-color: #f1f1f1; */
+
+}
+
+.card:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.price {
+  color: grey;
+  font-size: 22px;
+}
+
+.buttonadd {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #ff9f00;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.buttonbuy {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #fb641b;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.card button:hover {
+  opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <a href="#">Profile</a>
+  <a href="/viewcart">Cart Item</a>
+  <a href="/orderlist">Order Item</a>
+  <a href="/userappfeedback">Feedback</a>
+  <a href="/contactus">Contact</a>
+
+
+</div>
+
+<div id="main">
+  <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+  <span style="font-size:30px;cursor:pointer"><a style="text-decoration: none;color:white" href="/viewproduct">Dream Shopping</a></span>
+  <span style="font-size:30px;cursor:pointer; float: right;">| Hello,{{u}}</span>
+  <span style="font-size:30px; float: right;"><a style="text-decoration: none;color:white" href="/logout">logout</a></span>
+
+</div>
+</div>
+
+
+
+
+<!-- this is div and body part -->
+<center>
+<div >
+
+          <table  width="90%" border="1" bordercolor="#000000" bgcolor="#C6C6C6">
+
+            <tr>
+          <th>Id</th>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Weight</th>
+          <th>Description</th>
+          <th width="100px">Image</th>
+          <th>Buy</th>
+          <th>Cancel</th>
+
+
+      </tr>
+
+            {% for row in productlist%}
+
+            <tr>
+                <td>{{row.0}}</td>
+                <td>{{row.1}}</td>
+                <td>{{row.2}}</td>
+                <td>{{row.3}}</td>
+               <td>{{row.4}}</td>
+                 <td> {{row.5}} </td>
+                <td width="100px"> <img src="static/uploads/{{row.6}}" width="50px" height="50px" ></td>
+                <td>
+                <form id="myform" method="post" action="/proddetailscart">
+                 <input type="hidden" name="result" value="{{row.0}}">
+                    <input type="submit" value="Buy Now">
+                     </form>
+                </td>
+                <td>
+                <form id="myform2" method="post" action="/deletecartitem">
+                 <input type="hidden" name="result" value="{{row.0}}">
+                    <input type="submit" value="Cancel">
+                     </form>
+                </td>
+
+{% endfor  %}
+</table>
+
+
+
+
+
+</div>
+</center>
+
+
+
+
+
+
+<script>
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+  document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+  document.body.style.backgroundColor = "white";
+}
+</script>
+
+</body>
+</html>

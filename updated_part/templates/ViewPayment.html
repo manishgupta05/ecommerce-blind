@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+font-family: "Lato", sans-serif;
+transition: background-color .5s;
+margin: 0;
+}
+
+
+
+.sidenav {
+height: 100%;
+width: 0;
+position: fixed;
+z-index: 1;
+top: 0;
+left: 0;
+background-color: #111;
+overflow-x: hidden;
+transition: 0.5s;
+padding-top: 60px;
+}
+
+
+
+.sidenav a {
+padding: 8px 8px 8px 32px;
+text-decoration: none;
+font-size: 25px;
+color: #818181;
+display: block;
+transition: 0.3s;
+}
+
+
+
+.sidenav a:hover {
+color: #f1f1f1;
+}
+
+
+
+.sidenav .closebtn {
+position: absolute;
+top: 0;
+right: 25px;
+font-size: 36px;
+margin-left: 50px;
+}
+
+
+
+#main {
+transition: margin-left .5s;
+padding: 16px;
+color: white;
+background-color: #4058a5;
+}
+
+
+
+@media screen and (max-height: 450px) {
+.sidenav {padding-top: 15px;}
+.sidenav a {font-size: 18px;}
+}
+
+.abc{
+
+    margin-top: 3%;
+   margin-left: 25%;
+  width: 50%;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+
+  /* padding: 10px; */
+}
+
+/* style for form */
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+input[type=reset] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+input[type=reset]:hover {
+  background-color: #45a049;
+}
+/* div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+} */
+</style>
+</head>
+<body>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="/addproduct">Add Product</a>
+
+        <a href="/viewcustomer">List of Customer</a>
+        <a href="/viewfeedback">Feedback</a>
+
+        <a href="/viewpayment">View Payment</a>
+
+        <a href="/adminindex">Home</a>
+        </div>
+
+
+
+        <div id="main">
+        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+        <span style="font-size:30px;cursor:pointer">Dream Shopping</span>
+        <span style="font-size:30px;cursor:pointer; float: right;">| Hello,Admin</span>
+            <a id="GFG"  href="/logout"><span style="font-size:30px;cursor:pointer; float: right;">logout</span></a>
+</div>
+ <center>    <h3>View Payment</h3> <br>
+
+
+              <table width="900" border="1" bordercolor="#000000" bgcolor="#C6C6C6">
+
+                <tr>
+              <th>Payment Date</th>
+              <th>Prod id</th>
+              <th>prodname</th>
+              <th>Userid</th>
+              <th>Amount</th>
+              <th>Tax</th>
+	<th>Total</th>
+	<th>Paytype</th>
+              <th>Bank Name</th>
+          </tr>
+
+                {% for row in Paymentlist%}
+                <tr>
+                    <td>{{row.0}}</td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                    <td>{{row.3}}</td>
+ 	   <td>{{row.4}}</td>
+                    <td>{{row.5}}</td>
+                    <td>{{row.6}}</td>
+                    <td>{{row.7}} </td>
+	<td>{{row.8}} </td>
+	</tr>
+  {% endfor  %}
+	</table>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+</center>
+    <!-- Bootstrap core JavaScript -->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Additional Scripts -->
+    <script src="static/assets/js/custom.js"></script>
+    <script src="static/assets/js/owl.js"></script>
+
+<script>
+function openNav() {
+document.getElementById("mySidenav").style.width = "250px";
+document.getElementById("main").style.marginLeft = "250px";
+document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+function closeNav() {
+document.getElementById("mySidenav").style.width = "0";
+document.getElementById("main").style.marginLeft= "0";
+document.body.style.backgroundColor = "white";
+}
+
+
+</script>
+</body>
+</html>
