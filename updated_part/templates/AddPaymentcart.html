@@ -147,42 +147,32 @@ input[type=reset]:hover {
 
 <div class="abc">
 
- <form action="/insertpaymentcart" method="post" enctype="multipart/form-data">
-
-<b>
-         <label for="pname">Payment Date</label>
-        <input type="text" id="pname" name="Paymentdate"  value="{{today}}" placeholder="Payment Date..">
-
-        <label for="pprice">user Name</label>
-        <input type="text" id="pprice" name="userid" value="{{username}}" placeholder="user Name..">
-
-        <label for="cate">product id</label>
-        <input type="text" id="cate" name="prodid" value="{{pid}}" placeholder="product id..">
-
-        <label for="pweight">Product Name</label>
-        <input type="text" id="pweight" name="prodname" value="{{pname}}" placeholder="Product Name..">
-
-        <label for="des">Amount</label>
-        <input type="text" id="des" name="amount" value="{{pprice}}" placeholder="Amount..">
-
-        <label for="taxi">Tax</label>
-        <input type="text" id="taxi" name="tax" value="{{tax}}" placeholder="Tax..">
-
-        <label for="tot">Total</label>
-        <input type="text" id="tot" name="total" value="{{total}}" placeholder="Total..">
-
-        <label for="tot1">Pay Type</label>
-        <input type="text" id="tot1" name="paytype" value="{{paymode}}" placeholder="Pay Type..">
-
-        <label for="tot2">Bank Name</label>
-        <input type="text" id="tot2" name="bankname" placeholder="Bank Name..">
 
 
-
-
-            <input type="submit" name="Submit" value="Submit">
-         <input type="reset" name="reset" value="Re Enter">
-</b>
+<br>
+<br>
+        <span>Date</span><span>=</span><span>{{pdate}}</span><br>
+        <span>Product Id</span><span>=</span><span>{{pid}}</span><br>
+        <span>Product Name</span><span>=</span><span>{{pname}}</span><br>
+        <span>Price</span><span>=</span><span>{{pprice}}</span><br>
+        <span>Tax</span><span>=</span><span>{{tax}}</span><br>
+        <span>Total</span><span>=</span><span>{{total}}</span><br>
+<br>
+        <form action="/insertpaymentcart" method="post">
+            <label>Payment Mode:</label><br>
+                <input type="radio" id="pod" name="paytype" value="Pay On Delivery">
+                    <label for="pod">Pay On Delivery</label><br>
+                <input type="radio" id="emi" name="paytype" value="EMI">
+                    <label for="emi">EMI</label><br>
+                <input type="radio" id="online" name="paytype" value="Online">
+                    <label for="online">Online</label><br>
+                <input type="radio" id="card" name="paytype" value="Card">
+                    <label for="card">Card</label><br>
+                <input type="radio" id="upi" name="paytype" value="UPI">
+                    <label for="upi">UPI</label><br>
+        <input type="submit" name="Submit" value="Submit">
+        <input type="reset" name="reset" value="Re Enter">
+</br>
 </form>
 
 </div>
