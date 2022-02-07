@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = 'many random bytes'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'P@ssW0rd'
 app.config['MYSQL_DB'] = 'Shopping'
 #app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
@@ -141,13 +141,14 @@ def checklogin():
         else:
             cur = mysql.connection.cursor()
 
-            cur.execute("SELECT  userid,fname,email,password FROM register WHERE email = '%s' AND password = '%s'  "% (email, password))
+            cur.execute("SELECT  userid,fname,address,email,password FROM register WHERE email = '%s' AND password = '%s'  "% (email, password))
             data = cur.fetchone()
-            uid,fname,email,password = data
+            uid,fname,address,email,password = data
 
             session["fname"]=fname
             session["email"]=email
             session["userid"] = uid
+            session["address"] = address
             return redirect(url_for('viewproduct'))
 
     return render_template('login.html')
@@ -442,7 +443,7 @@ def viewcatagoryby():
         check = request.form['hdnbt']
         print(check)
         # uname = session["email"]
-        txt = 'You chooses  Category please select your Product'
+        txt = 'You chooses'  + check+'Category please select your Product'
         tts = gTTS(text=txt, lang='en')
         filename = 'temp.mp3'
         tts.save(filename)
@@ -466,10 +467,11 @@ def proddetails():
     print(result)
     if result != "":
         cur = mysql.connection.cursor()
-        cur.execute("SELECT  pid, pname,cate,	pprice,	pweight,des FROM product where pid = '%s'" % (result))
+        cur.execute("SELECT  pid, pname,cate,pprice,pweight,des FROM product where pid = '%s'" % (result))
         data = cur.fetchone()
         pid, pname, cate, pprice, pweight, des = data
-        det = "You have selected " + pname + " Price is " + str(pprice) + "  Weight is : " + pweight + " and " + des
+
+        det = "You have selected " + pname + " Price is " + str(pprice) + "  Weight is : " + pweight + " and " + des + "please select payment button for payment if you are not interested press cancel to go back home page."
         print(data)
         tts = gTTS(text=det, lang='en')
         filename = 'temp.mp3'
@@ -482,7 +484,7 @@ def proddetails():
         print("start")
         session["pid"] = pid
         print(pid)
-        return redirect(url_for('addpayment'))
+        return render_template('showmore.html', pid=pid, pname=pname, cate=cate, pprice=pprice, pweight=pweight,des=des)
 
 
 @app.route('/prodadd', methods=['POST'])
@@ -516,64 +518,96 @@ def prodadd():
 
 @app.route('/addpayment')
 def addpayment():
+    from datetime import datetime
+    now = datetime.now()
+
     cur = mysql.connection.cursor()
-    cur.execute("SELECT  pid, pname,cate,pprice,pweight,des FROM product where pid = '%s'" % (session["pid"]))
+    cur.execute("SELECT  pid, pname,pprice FROM product where pid = '%s'" % (session["pid"]))
     data = cur.fetchone()
-    pid, pname, cate, pprice, pweight, des = data
-
-    today = date.today()
+    pid, pname,pprice = data
+    # pdate = datetime.now()
+    paydate = now.strftime("%d/%m/%Y %H:%M:%S")
+    session["nowdate"]=paydate
     tax = pprice * 12 / 100
+    total = tax + pprice
+    session["pname"] = pname
+    session["pprice"] = pprice
+    session["tax"]=tax
+    session["total"]=total
 
-    return render_template('AddPayment.html', today=today, username=session["username"], pid=pid, pname=pname,
-                           pprice=pprice, tax=tax, total=tax + pprice)
+    return render_template('AddPayment.html', pdate=paydate, email=session["email"], pid=pid, pname=pname,pprice=pprice, tax=tax, total=total)
 
 
 @app.route('/insertpayment', methods=['POST'])
 def insertpayment():
-    if request.method == "POST":
-        try:
-            uname = session["email"]
-            Paymentdate = request.form['Paymentdate']
-            userid = request.form['userid']
-            prodid = request.form['prodid']
-            prodname = request.form['prodname']
+    pid=session["pid"]
+    email = session["email"]
+    pname=session["pname"]
+    pprice=session["pprice"]
+    pdate=session["nowdate"]
+    tax=session["tax"]
+    total=session["total"]
+    paytype = request.form['paytype']
 
-            amount = request.form['amount']
-            tax = request.form['tax']
-            total = request.form['total']
-            paytype = request.form['paytype']
-            bankname = request.form['bankname']
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "INSERT INTO payment (pdate, ppid, ppname,pprice,tax,total,paytype,pemail) VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
+        (pdate, pid, pname, pprice, tax, total, paytype, email))
+    cur.close()
+    mysql.connection.commit()
 
-            cur = mysql.connection.cursor()
-            cur.execute(
-                "INSERT INTO payment (Paymentdate, prodid, prodname,userid,amount,tax,total,paytype,bankname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s,%s)",
-                (Paymentdate, prodid, prodname, userid, amount, tax, total, paytype, bankname))
+    det = "Thank you for shopping"
+    tts = gTTS(text=det, lang='en')
+    filename = 'temp.mp3'
+    tts.save(filename)
+    music = pyglet.media.load(filename, streaming=False)
+    music.play()
+    sleep(music.duration)  # prevent from killing
+    os.remove(filename)  # remove temperory file
+    return redirect(url_for('addorderlist'))
 
-            flash("Data Inserted Successfully")
-            det = "Thank you for shopping"
-            tts = gTTS(text=det, lang='en')
-            filename = 'temp.mp3'
-            tts.save(filename)
-            music = pyglet.media.load(filename, streaming=False)
-            music.play()
-            sleep(music.duration)  # prevent from killing
-            os.remove(filename)  # remove temperory file
-            # adding in order list
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT  pid, pname,cate,pprice,pweight,des,pimage FROM product where pid = '%s'" % (prodid))
-            data = cur.fetchone()
-            pid, pname, cate, pprice, pweight, des, pimage = data
 
-            cur = mysql.connection.cursor()
-            cur.execute(
-                "INSERT INTO orderlist (opid, opname, ocate,opprice,opweight,odes,opimage,ouname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
-                (pid, pname, cate, pprice, pweight, des, pimage, uname))
-            mysql.connection.commit()
-            print(det)
-            return redirect(url_for('feedback'))
-        except (Exception) as e:
-            return redirect(url_for('addpayment'))
 
+@app.route('/addorderlist')
+def addorderlist():
+    pid = session["pid"]
+    email = session["email"]
+    pdate = session["nowdate"]
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT  pid, pname,cate,pprice,pweight,des,pimage FROM product where pid = '%s'" % (pid))
+    data = cur.fetchone()
+    pid, pname, cate, pprice, pweight, des, pimage = data
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT  payid,pdate FROM payment where pdate = '%s'" % (pdate))
+    data = cur.fetchone()
+    payid,pdate=data
+    odate=date.today()
+    cur.close()
+
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "INSERT INTO orderlist (opid,otnxid,opdate, opname, ocate,opprice,opweight,odes,opimage,odate,ouname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        (pid,payid,pdate, pname, cate, pprice, pweight, des, pimage, odate,email))
+    cur.close()
+    mysql.connection.commit()
+
+    return redirect(url_for('orderstatus'))
+
+@app.route('/orderstatus')
+def orderstatus():
+    pid = session["pid"]
+    fname = session["fname"]
+    address = session["address"]
+    nowdate = session["nowdate"]
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT  oid,opname,otnxid,odate FROM orderlist where opid = '%s' and opdate = '%s'" % (pid,nowdate))
+    data = cur.fetchone()
+    oid, opname, otnxid, odate = data
+    cur.close()
+
+    return render_template('ordersucess.html', u=fname, oid=oid, opname=opname, otnxid=otnxid, odate=odate,address=address)
 
 @app.route('/orderlist')
 def orderlist():
@@ -597,10 +631,11 @@ def proddetailscart():
     print(result)
     if result != "":
         cur = mysql.connection.cursor()
-        cur.execute("SELECT  pid, pname,cate,	pprice,	pweight,des FROM product where pid = '%s'" % (result))
+        cur.execute("SELECT  pid, pname,cate,pprice,pweight,des FROM product where pid = '%s'" % (result))
         data = cur.fetchone()
         pid, pname, cate, pprice, pweight, des = data
-        det = "You have selected " + pname + " Price is " + str(pprice) + "  Weight is : " + pweight + " and " + des
+
+        det = "You have selected " + pname + " Price is " + str(pprice) + "  Weight is : " + pweight + " and " + des + "please select payment button for payment if you are not interested press cancel to go back home page."
         print(data)
         tts = gTTS(text=det, lang='en')
         filename = 'temp.mp3'
@@ -613,80 +648,91 @@ def proddetailscart():
         print("start")
         session["pid"] = pid
         print(pid)
-        return redirect(url_for('addpaymentcart'))
+        return render_template('showmorecart.html', pid=pid, pname=pname, cate=cate, pprice=pprice, pweight=pweight,des=des)
 
 
 @app.route('/addpaymentcart')
 def addpaymentcart():
+    from datetime import datetime
+    now = datetime.now()
+
     cur = mysql.connection.cursor()
-    cur.execute("SELECT  pid, pname,cate,pprice,pweight,des FROM product where pid = '%s'" % (session["pid"]))
+    cur.execute("SELECT  pid, pname,pprice FROM product where pid = '%s'" % (session["pid"]))
     data = cur.fetchone()
-    pid, pname, cate, pprice, pweight, des = data
-
-    today = date.today()
+    pid, pname,pprice = data
+    # pdate = datetime.now()
+    paydate = now.strftime("%d/%m/%Y %H:%M:%S")
+    session["nowdate"]=paydate
     tax = pprice * 12 / 100
+    total = tax + pprice
+    session["pname"] = pname
+    session["pprice"] = pprice
+    session["tax"]=tax
+    session["total"]=total
 
-    return render_template('AddPaymentcart.html', today=today, username=session["email"], pid=pid, pname=pname,
-                           pprice=pprice, tax=tax, total=tax + pprice)
+    return render_template('AddPaymentcart.html', pdate=paydate, email=session["email"], pid=pid, pname=pname,pprice=pprice, tax=tax, total=total)
 
 
 @app.route('/insertpaymentcart', methods=['POST'])
 def insertpaymentcart():
-    fname = session["fname"]
-    name = session["email"]
-    if request.method == "POST":
-        try:
-            Paymentdate = request.form['Paymentdate']
-            userid = request.form['userid']
-            prodid = request.form['prodid']
-            prodname = request.form['prodname']
+    pid=session["pid"]
+    email = session["email"]
+    pname=session["pname"]
+    pprice=session["pprice"]
+    pdate=session["nowdate"]
+    tax=session["tax"]
+    total=session["total"]
+    paytype = request.form['paytype']
 
-            amount = request.form['amount']
-            tax = request.form['tax']
-            total = request.form['total']
-            paytype = request.form['paytype']
-            bankname = request.form['bankname']
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "INSERT INTO payment (pdate, ppid, ppname,pprice,tax,total,paytype,pemail) VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
+        (pdate, pid, pname, pprice, tax, total, paytype, email))
+    cur.close()
+    mysql.connection.commit()
 
-            cur = mysql.connection.cursor()
-            cur.execute(
-                "INSERT INTO payment (Paymentdate, prodid, prodname,userid,amount,tax,total,paytype,bankname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s,%s)",
-                (Paymentdate, prodid, prodname, userid, amount, tax, total, paytype, bankname))
+    det = "Thank you for shopping"
+    tts = gTTS(text=det, lang='en')
+    filename = 'temp.mp3'
+    tts.save(filename)
+    music = pyglet.media.load(filename, streaming=False)
+    music.play()
+    sleep(music.duration)  # prevent from killing
+    os.remove(filename)  # remove temperory file
+    return redirect(url_for('addorderlistcart'))
 
-            mysql.connection.commit()
+@app.route('/addorderlistcart')
+def addorderlistcart():
+    pid = session["pid"]
+    email = session["email"]
+    pdate = session["nowdate"]
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT  pid, pname,cate,pprice,pweight,des,pimage FROM product where pid = '%s'" % (pid))
+    data = cur.fetchone()
+    pid, pname, cate, pprice, pweight, des, pimage = data
+    cur.close()
 
-            # adding in order list
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT  pid, pname,cate,pprice,pweight,des,pimage FROM product where pid = '%s'" % (prodid))
-            data = cur.fetchone()
-            pid, pname, cate, pprice, pweight, des, pimage = data
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT  payid,pdate FROM payment where pdate = '%s'" % (pdate))
+    data = cur.fetchone()
+    payid,pdate=data
+    odate=date.today()
+    cur.close()
 
-            cur = mysql.connection.cursor()
-            cur.execute(
-                "INSERT INTO orderlist (opid, opname, ocate,opprice,opweight,odes,opimage,ouname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
-                (pid, pname, cate, pprice, pweight, des, pimage, name))
-            mysql.connection.commit()
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "INSERT INTO orderlist (opid,otnxid,opdate, opname, ocate,opprice,opweight,odes,opimage,odate,ouname) VALUES (%s, %s, %s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        (pid,payid,pdate, pname, cate, pprice, pweight, des, pimage, odate,email))
+    cur.close()
+    mysql.connection.commit()
 
-            # flash("Data Inserted Successfully")
-            det = "Thank you for shopping"
-            tts = gTTS(text=det, lang='en')
-            filename = 'temp.mp3'
-            tts.save(filename)
-            music = pyglet.media.load(filename, streaming=False)
-            music.play()
+    cur = mysql.connection.cursor()
+    cur.execute("Delete from addcart where cpid = '%s' and cuname = '%s'" % (pid, email))
+    cur.close()
+    mysql.connection.commit()
 
-            sleep(music.duration)  # prevent from killing
-            os.remove(filename)  # remove temperory file
-            print(det)
 
-            cur = mysql.connection.cursor()
-            cur.execute("Delete from addcart where cpid = '%s' and cuname = '%s'" % (prodid, name))
-            mysql.connection.commit()
-            cur.close()
-
-            return redirect(url_for('feedback'))
-        except (Exception) as e:
-            return redirect(url_for('addpayment'))
-
+    return redirect(url_for('orderstatus'))
 
 @app.route('/deletecartitem', methods=['POST'])
 def deletecartitem():
