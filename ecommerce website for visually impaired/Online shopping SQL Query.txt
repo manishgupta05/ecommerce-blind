@@ -1,0 +1,79 @@
+create database shopping;
+use shopping;
+
+CREATE TABLE IF NOT EXISTS register (
+userid int primary key NOT NULL AUTO_INCREMENT,
+fname varchar(50) DEFAULT NULL,
+lname varchar(50) DEFAULT NULL,
+email varchar(50) unique not null,
+currentdate varchar(50) DEFAULT NULL,
+mobile varchar(50) unique not null,
+password varchar(50) not null,
+address varchar(250) DEFAULT NULL);
+
+create table Product(pid int primary key auto_increment,
+ pname varchar(20) not null, 
+ cate varchar(50) not null,
+ pprice int not null, 
+ pweight varchar(50) not null,
+ des varchar(250) not null,
+ pimage varchar(255) not null );
+
+create table addcart(
+cid int primary key auto_increment,
+cpid int , 
+cpname varchar(20) not null,
+ ccate varchar(50) not null,
+ cpprice int not null,
+ cpweight varchar(50) not null,
+ cdes varchar(250) not null,
+ cpimage varchar(255) not null,
+ cuname varchar(50) DEFAULT NULL );
+ 
+create table orderlist(
+oid int primary key auto_increment,
+opid int ,otnxid int,
+opdate varchar(50) not null,
+opname varchar(20) not null,
+ ocate varchar(50) not null,
+ opprice int not null,
+ opweight varchar(50) not null,
+ odes varchar(250) not null,
+ opimage varchar(255) not null,
+ odate varchar(50) not null,
+ ouname varchar(50) DEFAULT NULL );
+
+
+create table payment(
+payid int primary key auto_increment,
+pdate varchar(50) DEFAULT NULL,
+ppid varchar(50) not null,
+ppname varchar(50) not null , 
+pprice varchar(50) not null,
+tax varchar(50) not null,
+total varchar(50) not null,
+paytype varchar(50) not null,
+pemail varchar(50) not null);
+
+
+create table feedback(
+fdate varchar(50) not null,
+ userid varchar(50) not null,
+ pid varchar(50) not null,
+ rating  varchar(50) not null,
+ review varchar(50) not null);
+
+create table Applicationfeedback(
+ser_rating varchar(50) not null,
+offer_satisfied varchar(50) not null,
+rating_price varchar(50) not null, 
+order_delivery varchar(50) not null , 
+customer_support varchar(50) not null,
+Recommend_product varchar(50) not null,
+review varchar(80) not null,
+Email varchar(50) not null);
+
+create table contact(
+name varchar(50) not null,
+ email varchar(50) not null,
+ message varchar(50) not null);
